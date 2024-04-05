@@ -12,7 +12,7 @@ interface ArrowButtonProps {
     isOpen: boolean; 
 }
 
-export const ArrowButton:  React.FC<ArrowButtonProps> = ({ onClick, isOpen }) => {
+export const ArrowButton = ({ onClick, isOpen }:ArrowButtonProps) => {
 	
 	return (
 		/* Не забываем указаывать role и aria-label атрибуты для интерактивных элементов */

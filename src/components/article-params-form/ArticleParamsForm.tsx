@@ -1,63 +1,99 @@
 import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, SyntheticEvent } from 'react';
 import { Select } from '../select';
 import {OptionType, fontFamilyOptions, fontSizeOptions, contentWidthArr, fontColors, backgroundColors} from 'src/constants/articleProps';
 import {RadioGroup} from '../radio-group';
 import {Separator} from '../separator';
 import { Text } from '../text';
+import { useOutsideClickClose } from '../select/hooks/useOutsideClickClose';
+import { defaultArticleState } from 'src/constants/articleProps';
 
 import styles from './ArticleParamsForm.module.scss';
 import clsx from 'clsx';
 
+type ArticleParamsFormProps = {
+	articleState: {
+		fontFamilyOption: OptionType;
+		fontSizeOption: OptionType;
+		fontColor: OptionType;
+		backgroundColor: OptionType;
+		contentWidth: OptionType;
+	};
+	setArticleState: React.Dispatch<React.SetStateAction<{
+		fontFamilyOption: OptionType;
+		fontSizeOption: OptionType;
+		fontColor: OptionType;
+		backgroundColor: OptionType;
+		contentWidth: OptionType;
+	}>>;
+	};
 
-export const ArticleParamsForm = () => {
+export const ArticleParamsForm = ({articleState, setArticleState}:ArticleParamsFormProps) => {
 	//храним состояние(открыта или закрыта панель)
 	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const rootRef = useRef<HTMLElement>(null)
 
 	const openClose = () => {
 		setIsOpen(prevIsOpen => !prevIsOpen);
 	}
 
+	useOutsideClickClose({
+		isOpen:isOpen,
+		rootRef,
+		onClose:openClose,
+		onChange:setIsOpen, 
+	});
 
 	//выбранный шрифт
-	const [selectedFont, setSelectedFont] = useState<OptionType>(fontFamilyOptions[0]);
+	const [selectedFont, setSelectedFont] = useState<OptionType>(articleState.fontFamilyOption);
 	
-	// Функция для обновления выбранного шрифта
     const handleFontChange = (font: OptionType) => {
         setSelectedFont(font);
     };
 
-	const [selectedFontSize, setSelectedFontSize] = useState<OptionType>(fontSizeOptions[0]);
+	//размер шрифта
+	const [selectedFontSize, setSelectedFontSize] = useState<OptionType>(articleState.fontSizeOption);
 
 	const handleFontSizeChange = (fontSize: OptionType) => {
         setSelectedFontSize(fontSize);
     };
 
-	const [selectedFontColor, setSelectedFontColor] = useState<OptionType>(fontColors[0]);
+	//цвет шрифта
+	const [selectedFontColor, setSelectedFontColor] = useState<OptionType>(articleState.fontColor);
 	
     const handleFontColorChange = (fontColor: OptionType) => {
         setSelectedFontColor(fontColor);
     };
 
-	const [selectedBackgroundColor, setselectedBackgroundColor] = useState<OptionType>(backgroundColors[0]);
+	//цвет фона
+	const [selectedBackgroundColor, setselectedBackgroundColor] = useState<OptionType>(articleState.backgroundColor);
 	
     const handleBackgroundColorChange = (Color: OptionType) => {
         setselectedBackgroundColor(Color);
     };
 
-	const [selectedWidth, setselectedWidth] = useState<OptionType>(contentWidthArr[0]);
+	//ширина контента
+	const [selectedWidth, setselectedWidth] = useState<OptionType>(articleState.contentWidth);
 	
     const handleWideChange = (Color: OptionType) => {
         setselectedWidth(Color);
     };
 
+	const handleFormSubmit = (evt:SyntheticEvent) => {
+		evt.preventDefault();
+		setArticleState({...articleState, fontFamilyOption: selectedFont, fontSizeOption: selectedFontSize, fontColor: selectedFontColor, contentWidth: selectedWidth, backgroundColor: selectedBackgroundColor});
+	};
+
+	const handleReset = () => {
+		setArticleState(defaultArticleState);
+	};
 
 	return (
 		<>
 			<ArrowButton onClick={openClose} isOpen={isOpen}/>
-			<aside className={clsx(styles.container, isOpen && styles.container_open)}>
-				<form className={styles.form}>
+			<aside ref={rootRef} className={clsx(styles.container, isOpen && styles.container_open)}>
+				<form onSubmit={handleFormSubmit} className={styles.form}>
 					<Text as="h2" size={31} weight={800} align="left">
 						Задайте параметры
 					</Text>
@@ -98,7 +134,7 @@ export const ArticleParamsForm = () => {
 						onChange={handleWideChange}
 					/>
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' type='reset' />
+						<Button onClick={handleReset} title='Сбросить' type='reset' />
 						<Button title='Применить' type='submit' />
 					</div>
 				</form>
