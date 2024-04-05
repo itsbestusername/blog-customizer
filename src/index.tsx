@@ -13,6 +13,7 @@ const domNode = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(domNode);
 
 const App = () => {
+	//сохраняем состояние статьи
 	const [articleState, setArticleState] = useState(defaultArticleState);
 
 	return (
