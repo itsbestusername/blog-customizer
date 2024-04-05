@@ -1,5 +1,4 @@
 import arrow from 'src/images/arrow.svg';
-import {useEffect, useState} from 'react';
 import clsx from 'clsx';
 
 import styles from './ArrowButton.module.scss';
@@ -8,12 +7,11 @@ import styles from './ArrowButton.module.scss';
 export type OnClick = () => void;
 
 interface ArrowButtonProps {
-    onClick: OnClick;
-    isOpen: boolean; 
+	onClick: OnClick;
+	isOpen: boolean;
 }
 
-export const ArrowButton = ({ onClick, isOpen }:ArrowButtonProps) => {
-	
+export const ArrowButton = ({ onClick, isOpen }: ArrowButtonProps) => {
 	return (
 		/* Не забываем указаывать role и aria-label атрибуты для интерактивных элементов */
 		<div
@@ -22,7 +20,11 @@ export const ArrowButton = ({ onClick, isOpen }:ArrowButtonProps) => {
 			tabIndex={0}
 			className={clsx(styles.container, isOpen && styles.container_open)}
 			onClick={onClick}>
-			<img src={arrow} alt='иконка стрелочки' className={clsx(styles.arrow, isOpen && styles.arrow_open)} />
+			<img
+				src={arrow}
+				alt='иконка стрелочки'
+				className={clsx(styles.arrow, isOpen && styles.arrow_open)}
+			/>
 		</div>
 	);
 };
